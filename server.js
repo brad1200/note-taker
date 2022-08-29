@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const notesDB = require('./db/db.json');
+const fs = require('fs');
 
 const PORT = process.env.port || 3001;
 
@@ -22,16 +23,30 @@ app.get('/notes', (req, res) =>
     res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
 
-app.get('/api/notes', (req, res) =>
-    res.json(notesDB)
-);
+app.get('/api/notes', (req, res) => {
+    res.sendFile(path.join(__dirname, '/db/db.json'));
+})
+
 
 app.post('/api/notes', (req, res) => {
-    const { body } = req;
-    notesDB.push(body);
-    res.json(notesDB)
-    console.log(notesDB);
+    fs.readFile(path.join(__dirname, 'db/db.json'), 'utf-8', (error) => {
+        if (error) {
+            throw error;
+        }
+        const { body } = req;
+        notesDB.push(body);
+
+        console.log(notesDB);
+
+        fs.writeFile(path.join(__dirname, 'db/db.json'), JSON.stringify(notesDB), (error) => {
+            if (error) {
+                throw error;
+            }
+            return res.json(notesDB);
+        })
+    })
 });
+
 
 app.delete('/api/notes/:id', (req, res) => {
 
