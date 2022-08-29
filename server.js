@@ -3,10 +3,8 @@ const path = require('path');
 const notesDB = require('./db/db.json');
 const fs = require('fs');
 
-const PORT = process.env.PORT || 3001;
-
 const app = express();
-
+const PORT = process.env.PORT || 3001;
 
 // Middleware for parsing JSON and urlencoded form data
 app.use(express.json());
